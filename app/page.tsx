@@ -1,14 +1,15 @@
+'use client';
 
 import React, { useState } from 'react';
-import { Header } from './components/Header';
-import { UploadZone } from './components/UploadZone';
-import { ResultCard } from './components/ResultCard';
-import { analyzeOutfitImage } from './services/doubaoService';
-import { AppState, FashionAnalysis, Language, ModelId } from './types';
+import { Header } from '../components/Header';
+import { UploadZone } from '../components/UploadZone';
+import { ResultCard } from '../components/ResultCard';
+import { analyzeOutfitImage } from '../services/doubaoService';
+import { AppState, FashionAnalysis, Language, ModelId } from '../types';
 import { AlertCircle } from 'lucide-react';
-import { translations } from './utils/translations';
+import { translations } from '../utils/translations';
 
-const App: React.FC = () => {
+export default function Home() {
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
   const [analysisResult, setAnalysisResult] = useState<FashionAnalysis | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -86,6 +87,4 @@ const App: React.FC = () => {
       </main>
     </div>
   );
-};
-
-export default App;
+}

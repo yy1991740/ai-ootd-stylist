@@ -1,6 +1,4 @@
-
 import { FashionAnalysis, Language, ModelId } from "../types";
-import { getPrompts } from "../utils/translations";
 
 // Helper to convert File to Base64
 const fileToGenerativePart = async (file: File): Promise<string> => {
@@ -21,64 +19,26 @@ export const analyzeOutfitImage = async (file: File, lang: Language, modelId: Mo
   try {
     const base64Data = await fileToGenerativePart(file);
     
-    // API Key from process.env as per guidelines for the environment
-    const apiKey = process.env.API_KEY;
-
-    if (!apiKey) {
-      console.error("API Key is missing. Please ensure API_KEY is set in the environment.");
-      throw new Error("API Key is missing configuration.");
-    }
-
-    const prompts = getPrompts(lang);
-
-    const payload = {
-      model: modelId,
-      messages: [
-        {
-          role: "system",
-          content: prompts.system
+    const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompts.user
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${file.type};base64,${base64Data}`
-              }
-            }
-          ]
-        }
-      ]
-    };
-
-    const response = await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(payload)
+        body: JSON.stringify({
+            base64Data,
+            lang,
+            modelId,
+            fileType: file.type
+        })
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error: ${response.status} - ${errorText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to analyze image');
     }
 
     const data = await response.json();
-    const content = data.choices[0]?.message?.content;
-
-    if (!content) throw new Error("No response from AI");
-
-    // Clean up content if the model wraps it in markdown code blocks
-    const cleanedContent = content.replace(/```json\n?|```/g, '').trim();
-
-    return JSON.parse(cleanedContent) as FashionAnalysis;
+    return data as FashionAnalysis;
 
   } catch (error) {
     console.error("Error analyzing outfit:", error);
