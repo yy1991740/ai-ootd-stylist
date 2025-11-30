@@ -22,7 +22,7 @@
 
 ## 🛠 技术栈
 
-- **前端框架**: React 18+ (Vite)
+- **全栈框架**: [Next.js 16](https://nextjs.org/) (App Router)
 - **开发语言**: TypeScript
 - **样式库**: Tailwind CSS
 - **图标库**: Lucide React
@@ -33,7 +33,7 @@
 
 ### 前置要求
 
-- Node.js (v16 或更高版本)
+- Node.js (v18 或更高版本)
 - npm 或 yarn
 - 有效的 [火山引擎 (Volcengine Ark)](https://www.volcengine.com/product/ark) API Key
 
@@ -41,7 +41,7 @@
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/yourusername/ai-ootd-stylist.git
+   git clone https://github.com/yy1991740/ai-ootd-stylist.git
    cd ai-ootd-stylist
    ```
 
@@ -51,13 +51,13 @@
    ```
 
 3. **配置环境变量**
-   在项目根目录下创建一个 `.env` 文件：
+   在项目根目录下创建一个 `.env.local` 文件：
    ```bash
-   touch .env
+   touch .env.local
    ```
    添加您的 API Key：
    ```env
-   API_KEY=your_volcengine_api_key_here
+   DOUBAO_API_KEY=your_volcengine_api_key_here
    ```
    *(注意：Key 通常以 `sk-` 开头)*
 
@@ -65,55 +65,47 @@
    ```bash
    npm run dev
    ```
-   在浏览器中打开 `http://localhost:5173`。
+   在浏览器中打开 `http://localhost:3000`。
 
 ## 📦 构建与生产
 
-生成生产环境的静态文件：
+生成生产环境的构建：
 
 ```bash
 npm run build
 ```
 
-构建产物将输出到 `dist` 目录。
+启动生产服务器：
+```bash
+npm start
+```
 
 ## ☁️ 部署指南 (Vercel)
 
-本项目针对 Vercel 部署进行了优化。
+本项目已完全适配 Vercel 部署。
 
 1. 将代码推送到 GitHub 仓库。
 2. 在 Vercel 中导入该项目。
 3. **关键步骤**: 在 Vercel 项目设置中，进入 **Settings > Environment Variables**。
-   - Key: `API_KEY`
+   - Key: `DOUBAO_API_KEY`
    - Value: `您的_sk_..._密钥`
 4. 点击 **Deploy** 进行部署。
 
 ## 📁 项目结构
 
 ```
-├── components/        # React UI 组件
-│   ├── Header.tsx     # 顶部导航与控制器
-│   ├── UploadZone.tsx # 图片上传区域
-│   └── ResultCard.tsx # 分析结果展示卡片
+├── app/                 # Next.js App Router 目录
+│   ├── api/             # 后端 API 路由
+│   │   └── analyze/     # 图像分析 API
+│   ├── layout.tsx       # 全局布局
+│   └── page.tsx         # 主页组件
+├── components/          # React UI 组件
+│   ├── Header.tsx       # 顶部导航与控制器
+│   ├── UploadZone.tsx   # 图片上传区域
+│   └── ResultCard.tsx   # 分析结果展示卡片
 ├── services/
-│   └── doubaoService.ts # 火山引擎 API 集成服务
+│   └── doubaoService.ts # 前端服务层
 ├── utils/
-│   └── translations.ts  # 国际化文案与 AI 提示词 (Prompt)
-├── types.ts           # TypeScript 类型定义
-├── App.tsx            # 主应用逻辑
-└── vite.config.ts     # Vite 配置 (处理环境变量注入)
+│   └── translations.ts  # 多语言与 Prompt 管理
+└── public/              # 静态资源
 ```
-
-## 📝 配置详情
-
-### 模型配置
-应用当前支持以下模型端点（定义在 `types.ts` 中）：
-- `doubao-1.5-vision-pro-250328` (默认)
-- `doubao-seed-1-6-vision-250815`
-
-### 提示词工程 (Prompt Engineering)
-提示词位于 `utils/translations.ts` 中。我们对提示词进行了专门调优，以克服 AI 模型通常较为保守的评分倾向，鼓励对优秀的穿搭给出 90 分以上的高分，从而提供更具鼓励性的用户体验。
-
-## 📄 许可证
-
-MIT License
